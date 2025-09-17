@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOSS4Gov Language Test</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+    .test-section {
+      margin-bottom: 30px;
+      border: 1px solid #eee;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .test-section h2 {
+      margin-top: 0;
+    }
+    .log {
+      background: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      max-height: 200px;
+      overflow: auto;
+    }
+    button {
+      background: #4b5563;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    button:hover {
+      background: #374151;
+    }
+    .error { color: #e53e3e; }
+    .success { color: #38a169; }
+  </style>
+</head>
+<body>
+  <h1>FOSS4Gov Language Files Debug</h1>
+  
+  <div class="test-section">
+    <h2>1. File System Check</h2>
+    <p>This checks if the language files exist in the expected location.</p>
+    <div id="fs-check-log" class="log">Loading...</div>
+    <button onclick="checkFileSystem()">Run File System Check</button>
+  </div>
+  
+  <div class="test-section">
+    <h2>2. Direct File Access Test</h2>
+    <p>This tries to fetch each language file directly.</p>
+    <div id="direct-access-log" class="log">Click button to start test...</div>
+    <button onclick="testDirectAccess()">Test Direct Access</button>
+  </div>
+  
+  <div class="test-section">
+    <h2>3. Test i18n System</h2>
+    <p>This tests the i18n system with different languages.</p>
+    <div id="i18n-test-log" class="log">Click button to start test...</div>
+    <div>
+      <button onclick="testI18n('en')">Test English</button>
+      <button onclick="testI18n('fr')">Test French</button>
+      <button onclick="testI18n('de')">Test German</button>
+      <button onclick="testI18n('nl')">Test Dutch</button>
+      <button onclick="testI18n('es')">Test Spanish</button>
+      <button onclick="testI18n('it')">Test Italian</button>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>4. Fix Path Issues</h2>
+    <p>This will attempt to create a copy of your language files in the correct server path.</p>
+    <div id="fix-log" class="log">Click button to attempt fix...</div>
+    <button onclick="attemptFix()">Attempt Fix</button>
+  </div>
+
+  <script>
+    // Utility function to log messages
+    function log(elementId, message, isError = false, isSuccess = false) {
+      const logElement = document.getElementById(elementId);
+      const entry = document.createElement('div');
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      if (isError) entry.classList.add('error');
+      if (isSuccess) entry.classList.add('success');
+      logElement.appendChild(entry);
+      logElement.scrollTop = logElement.scrollHeight;
+    }
+
+    // File system check
+    async function checkFileSystem() {
+      const logId = 'fs-check-log';
+      document.getElementById(logId).innerHTML = ''; // Clear log
+      
+      log(logId, 'Checking server file structure...');
+      
+      try {
+        // We'll use the fetch API to try to get a directory listing
+        // This is a basic approach and may not work on all servers
+        const languages = ['en', 'fr', 'de', 'nl', 'es', 'it'];
+        
+        log(logId, 'Checking for language directory...');
+        try {
+          const response = await fetch('/lang/');
+          if (response.ok) {
+            log(logId, 'Language directory exists!', false, true);
+          } else {
+            log(logId, `Language directory check failed: ${response.status} ${response.statusText}`, true);
+          }
+        } catch (error) {
+          log(logId, `Error checking language directory: ${error.message}`, true);
+        }
+        
+        // Check for each language file
+        for (const lang of languages) {
+          try {
+            const response = await fetch(`/lang/${lang}.yaml`);
+            if (response.ok) {
+              log(logId, `${lang}.yaml exists and is accessible!`, false, true);
+            } else {
+              log(logId, `${lang}.yaml is not accessible: ${response.status} ${response.statusText}`, true);
+            }
+          } catch (error) {
+            log(logId, `Error accessing ${lang}.yaml: ${error.message}`, true);
+          }
+        }
+        
+        // Check for alternate paths
+        log(logId, 'Checking alternate paths...');
+        const alternatePaths = [
+          './lang/',
+          '../lang/',
+          '/foss4gov/lang/',
+          'lang/'
+        ];
+        
+        for (const path of alternatePaths) {
+          try {
+            const response = await fetch(`${path}en.yaml`);
+            if (response.ok) {
+              log(logId, `Found English file at: ${path}en.yaml`, false, true);
+            } else {
+              log(logId, `Not found at ${path}en.yaml: ${response.status}`, true);
+            }
+          } catch (error) {
+            log(logId, `Error trying ${path}en.yaml: ${error.message}`, true);
+          }
+        }
+        
+        log(logId, 'File system check complete.');
+      } catch (error) {
+        log(logId, `Error performing file system check: ${error.message}`, true);
+      }
+    }
+
+    // Direct file access test
+    async function testDirectAccess() {
+      const logId = 'direct-access-log';
+      document.getElementById(logId).innerHTML = ''; // Clear log
+      
+      log(logId, 'Testing direct access to language files...');
+      
+      const languages = ['en', 'fr', 'de', 'nl', 'es', 'it'];
+      const paths = [
+        '/lang/',
+        './lang/',
+        '../lang/',
+        '/foss4gov/lang/',
+        'lang/',
+        ''
+      ];
+      
+      for (const lang of languages) {
+        for (const path of paths) {
+          const url = `${path}${lang}.yaml`;
+          try {
+            log(logId, `Trying to fetch ${url}...`);
+            const startTime = performance.now();
+            const response = await fetch(url);
+            const endTime = performance.now();
+            
+            if (response.ok) {
+              const text = await response.text();
+              log(logId, `✅ Successfully fetched ${url} (${Math.round(endTime - startTime)}ms, ${text.length} bytes)`, false, true);
+            } else {
+              log(logId, `❌ Failed to fetch ${url}: ${response.status} ${response.statusText}`, true);
+            }
+          } catch (error) {
+            log(logId, `❌ Error fetching ${url}: ${error.message}`, true);
+          }
+        }
+      }
+      
+      log(logId, 'Direct access testing complete.');
+    }
+
+    // Test i18n system
+    async function testI18n(lang) {
+      const logId = 'i18n-test-log';
+      log(logId, `Testing i18n system with language: ${lang}...`);
+      
+      try {
+        // Check if i18n is available
+        if (typeof window.i18n === 'undefined') {
+          log(logId, 'i18n system not loaded yet. Loading from translations.js and i18n.js...', true);
+          
+          // Try to load the required scripts
+          await loadScript('https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js');
+          await loadScript('translations.js');
+          await loadScript('i18n.js');
+          
+          log(logId, 'Scripts loaded. Waiting for i18n system to initialize...');
+          
+          // Check again after loading
+          if (typeof window.i18n === 'undefined') {
+            log(logId, 'i18n system still not available after loading scripts.', true);
+            return;
+          }
+        }
+        
+        // Test language switching
+        log(logId, `Changing language to ${lang}...`);
+        window.i18n.changeLanguage(lang);
+        
+        // Log current translations
+        const currentTranslations = window.i18n.currentTranslations();
+        if (currentTranslations) {
+          log(logId, `Current translations loaded: ${Object.keys(currentTranslations).join(', ')}`, false, true);
+          
+          // Check some key translations
+          if (currentTranslations.app && currentTranslations.app.title) {
+            log(logId, `app.title: ${currentTranslations.app.title}`, false, true);
+          }
+          
+          if (currentTranslations.nav && currentTranslations.nav.home) {
+            log(logId, `nav.home: ${currentTranslations.nav.home}`, false, true);
+          }
+        } else {
+          log(logId, 'No translations loaded.', true);
+        }
+      } catch (error) {
+        log(logId, `Error testing i18n: ${error.message}`, true);
+      }
+    }
+
+    // Utility to load a script dynamically
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+        document.head.appendChild(script);
+      });
+    }
+
+    // Attempt to fix path issues
+    async function attemptFix() {
+      const logId = 'fix-log';
+      document.getElementById(logId).innerHTML = ''; // Clear log
+      
+      log(logId, 'Attempting to fix path issues...');
+      
+      try {
+        // First, check what server-side options are available
+        log(logId, 'Creating simple redirection test...');
+        
+        // Create a test file to show current server path
+        const testContent = `<!DOCTYPE html>
+<html>
+<head>
+  <title>Path Test</title>
+</head>
+<body>
+  <h1>Server Path Information</h1>
+  <p>This file is used to determine the server's path configuration.</p>
+  <script>
+    document.write('<p>Current URL: ' + window.location.href + '</p>');
+    document.write('<p>Page Path: ' + window.location.pathname + '</p>');
+    document.write('<p>Host: ' + window.location.host + '</p>');
+  </script>
+</body>
+</html>`;
+        
+        // Try to save this file using various methods
+        log(logId, 'Cannot directly write files from the browser. Please follow these manual steps:');
+        log(logId, '1. Create a file called "path-test.html" in your web root with the following content:');
+        log(logId, testContent);
+        log(logId, '2. Access this file in your browser to see server path information');
+        log(logId, '3. Based on the results, use one of these approaches:');
+        log(logId, '   a. Move your lang folder to the web server root');
+        log(logId, '   b. Update i18n.js to use the correct path to your lang folder');
+        log(logId, '   c. Create a symbolic link from the web server root to your lang folder');
+        
+        // Provide specific instructions for common server configurations
+        log(logId, '\nCommon server solutions:');
+        log(logId, '1. If using a simple HTTP server (like http-server or python -m http.server):');
+        log(logId, '   - Make sure to start the server from the directory containing lang/');
+        log(logId, '   - Example: cd /Users/mgifford/foss4gov && python3 -m http.server 8000');
+        
+        log(logId, '2. If using a server like Apache or Nginx:');
+        log(logId, '   - Configure the document root to point to your foss4gov directory');
+        log(logId, '   - Or create a symbolic link: ln -s /Users/mgifford/foss4gov/lang /var/www/html/lang');
+        
+        log(logId, '3. Quickest solution for testing:');
+        log(logId, '   - Modify i18n.js to use absolute file paths (not recommended for production)');
+        log(logId, '   - Or use the fallback translations exclusively by commenting out the fetch call');
+      } catch (error) {
+        log(logId, `Error in fix attempt: ${error.message}`, true);
+      }
+    }
+  </script>
+</body>
+</html>

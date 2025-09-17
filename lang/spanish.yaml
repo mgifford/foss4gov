@@ -1,0 +1,101 @@
+# Spanish language file
+title: "Soberanía Digital a Través del Código Abierto"
+meta_description: "Campaña global para listar empresas de servicios que utilizan y contribuyen a Software Libre y de Código Abierto para servicios digitales gubernamentales. Agregue su empresa a través de Pull Request o GitHub Issue."
+skip_link: "Saltar al contenido principal"
+
+# Header
+header:
+  title: "Soberanía Digital a Través del Código Abierto"
+  lede1: "[ES] We are building a global list of service companies that use and contribute to Free and Open Source Software for government digital services. Contribute your company by Pull Request or GitHub Issue."
+  lede2: "[ES] Open innovation enables governments to adapt, experiment, and avoid lock-in. Collaboration is essential to healthy democracies. Public code strengthens digital public goods."
+  actions:
+    add_company: "Agregar su empresa"
+    create_issue: "Crear un Issue en GitHub"
+
+# How to contribute section
+how_to_contribute:
+  title: "Cómo contribuir"
+  steps:
+    - "Hacer fork del repositorio."
+    - "[ES] Add your company to the <code>companies.csv</code> file and submit a Pull Request."
+    - "[ES] Or, create a GitHub Issue with the same details using the form below."
+  hint: "[ES] No ads, no pay-to-play. Listing is merit based and focused on real FOSS contributions to digital public goods."
+  notice: "[ES] This page does not collect or store form data. The form below generates a prefilled GitHub Issue link or PR payload for you to submit to the repository."
+
+# Form section
+form:
+  title: "Generar su presentación"
+  help: "[ES] Fields marked with <span class=\"req\" aria-label=\"required\">*</span> are required."
+  fields:
+    name:
+      label: "Nombre"
+      required: true
+    english:
+      label: "Alternativa en inglés (si aplica)"
+      required: false
+    website:
+      label: "Sitio web"
+      required: true
+      placeholder: "https://ejemplo.org"
+    email:
+      label: "Correo de información"
+      required: false
+      placeholder: "info@ejemplo.org"
+    linkedin:
+      label: "Perfil de LinkedIn"
+      required: false
+      placeholder: "https://www.linkedin.com/company/..."
+    github:
+      label: "Perfil de GitHub"
+      required: false
+      placeholder: "https://github.com/su-org"
+    other_repo:
+      label: "Otro repositorio Git público"
+      required: false
+      placeholder: "https://gitlab.com/su-org"
+  buttons:
+    build_issue: "Crear Issue en GitHub"
+    build_csv: "Crear fila CSV para PR"
+  validation:
+    required_fields: "Nombre y Sitio web son obligatorios."
+  output:
+    issue_link: "[ES] Open this link to create your prefilled GitHub Issue:"
+    csv_row: "[ES] Copy this line into <code>companies.csv</code> and submit a PR:"
+    
+# Companies section
+companies:
+  title: "Empresas listadas"
+  loading: "Cargando empresas..."
+  empty: "[ES] No companies listed yet. Be the first to contribute!"
+  error: "[ES] Could not load the list of companies: {error}. Please check that the file \"companies.csv\" exists in the project root."
+
+# Criteria section
+criteria:
+  title: "Criterios de listado"
+  items:
+    - "[ES] Active use of FOSS in delivery of government digital services."
+    - "[ES] Documented contributions to upstream projects. Examples include merged pull requests, maintainership, or financial support with transparency."
+    - "[ES] Clear governance and security practices. Preference for OSI-approved licenses."
+
+# Footer
+footer:
+  text1: "[ES] Built for openness and speed. No trackers. No cookies."
+  text2: "[ES] Keyboard tips: Tab to move focus. Shift+Tab to go back. Enter to activate buttons and links."
+
+# Language switcher
+language_switcher:
+  label: "Seleccionar idioma"
+  languages:
+    en: "English"
+    fr: "Français"
+    de: "Deutsch"
+    nl: "Nederlands"
+    es: "Español"
+    it: "Italiano"
+
+# Issue template
+issue:
+  title: "Solicitud de listado: {name}"
+  company_details: "## Detalles de la empresa"
+  confirmation: "## Confirmación"
+  confirmation_text: "[ES] I confirm this company uses and contributes to FOSS for government digital services."

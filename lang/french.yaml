@@ -1,0 +1,101 @@
+# French language file
+title: "Souveraineté Numérique Grâce à l'Open Source"
+meta_description: "Campagne mondiale pour répertorier les entreprises de service qui utilisent et contribuent aux logiciels libres et open source pour les services numériques gouvernementaux. Ajoutez votre entreprise via Pull Request ou GitHub Issue."
+skip_link: "Passer au contenu principal"
+
+# Header
+header:
+  title: "Souveraineté Numérique Grâce à l'Open Source"
+  lede1: "Nous construisons une liste mondiale d'entreprises de services qui utilisent et contribuent aux logiciels libres et open source pour les services numériques gouvernementaux. Contribuez avec votre entreprise par Pull Request ou GitHub Issue."
+  lede2: "L'innovation ouverte permet aux gouvernements de s'adapter, d'expérimenter et d'éviter l'enfermement. La collaboration est essentielle aux démocraties saines. Le code public renforce les biens publics numériques."
+  actions:
+    add_company: "Ajouter votre entreprise"
+    create_issue: "Créer un problème GitHub"
+
+# How to contribute section
+how_to_contribute:
+  title: "Comment contribuer"
+  steps:
+    - "Forker le dépôt."
+    - "Ajoutez votre entreprise au fichier <code>companies.csv</code> et soumettez une Pull Request."
+    - "Ou créez un problème GitHub avec les mêmes détails en utilisant le formulaire ci-dessous."
+  hint: "Pas de publicité, pas de paiement pour jouer. Le référencement est basé sur le mérite et axé sur les contributions réelles au FOSS pour les biens publics numériques."
+  notice: "Cette page ne collecte ni ne stocke les données de formulaire. Le formulaire ci-dessous génère un lien GitHub Issue prérempli ou une charge utile PR que vous devez soumettre au dépôt."
+
+# Form section
+form:
+  title: "Générer votre soumission"
+  help: "Les champs marqués d'un <span class=\"req\" aria-label=\"obligatoire\">*</span> sont obligatoires."
+  fields:
+    name:
+      label: "Nom"
+      required: true
+    english:
+      label: "Alternative en anglais (si applicable)"
+      required: false
+    website:
+      label: "Site Web"
+      required: true
+      placeholder: "https://exemple.org"
+    email:
+      label: "Email d'information"
+      required: false
+      placeholder: "info@exemple.org"
+    linkedin:
+      label: "Profil LinkedIn"
+      required: false
+      placeholder: "https://www.linkedin.com/company/..."
+    github:
+      label: "Profil GitHub"
+      required: false
+      placeholder: "https://github.com/votre-org"
+    other_repo:
+      label: "Autre dépôt Git public"
+      required: false
+      placeholder: "https://gitlab.com/votre-org"
+  buttons:
+    build_issue: "Créer un problème GitHub"
+    build_csv: "Créer une ligne CSV pour PR"
+  validation:
+    required_fields: "Le nom et le site Web sont obligatoires."
+  output:
+    issue_link: "Ouvrez ce lien pour créer votre problème GitHub prérempli :"
+    csv_row: "Copiez cette ligne dans <code>companies.csv</code> et soumettez une PR :"
+    
+# Companies section
+companies:
+  title: "Entreprises répertoriées"
+  loading: "Chargement des entreprises..."
+  empty: "Aucune entreprise répertoriée pour l'instant. Soyez le premier à contribuer !"
+  error: "Impossible de charger la liste des entreprises : {error}. Veuillez vérifier que le fichier \"companies.csv\" existe à la racine du projet."
+
+# Criteria section
+criteria:
+  title: "Critères de référencement"
+  items:
+    - "Utilisation active de FOSS dans la prestation de services numériques gouvernementaux."
+    - "Contributions documentées aux projets en amont. Les exemples incluent les pull requests fusionnées, la maintenance ou le soutien financier avec transparence."
+    - "Pratiques de gouvernance et de sécurité claires. Préférence pour les licences approuvées par l'OSI."
+
+# Footer
+footer:
+  text1: "Construit pour l'ouverture et la rapidité. Pas de trackers. Pas de cookies."
+  text2: "Conseils clavier : Tab pour déplacer le focus. Shift+Tab pour revenir en arrière. Entrée pour activer les boutons et les liens."
+
+# Language switcher
+language_switcher:
+  label: "Sélectionner la langue"
+  languages:
+    en: "English"
+    fr: "Français"
+    de: "Deutsch"
+    nl: "Nederlands"
+    es: "Español"
+    it: "Italiano"
+
+# Issue template
+issue:
+  title: "Demande de référencement : {name}"
+  company_details: "## Détails de l'entreprise"
+  confirmation: "## Confirmation"
+  confirmation_text: "Je confirme que cette entreprise utilise et contribue à FOSS pour les services numériques gouvernementaux."
