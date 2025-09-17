@@ -61,6 +61,9 @@ form:
     build_csv: "Créer une ligne CSV pour PR"
   validation:
     required_fields: "Le nom et le site Web sont obligatoires."
+    invalid_url: "Veuillez entrer une URL valide."
+    invalid_email: "Veuillez entrer une adresse email valide."
+    error_heading: "Erreur de formulaire:"
   output:
     issue_link: "Ouvrez ce lien pour créer votre problème GitHub prérempli :"
     csv_row: "Copiez cette ligne dans <code>companies.csv</code> et soumettez une PR :"
@@ -80,10 +83,16 @@ criteria:
     - "Contributions documentées aux projets en amont. Les exemples incluent les pull requests fusionnées, la maintenance ou le soutien financier avec transparence."
     - "Pratiques de gouvernance et de sécurité claires. Préférence pour les licences approuvées par l'OSI."
 
+# Navigation helpers
+navigation:
+  skip_to_form: "Passer au formulaire de soumission"
+
 # Footer
 footer:
-  text1: "Construit pour l'ouverture et la rapidité. Pas de trackers. Pas de cookies."
-  text2: "Conseils clavier : Tab pour déplacer le focus. Shift+Tab pour revenir en arrière. Entrée pour activer les boutons et les liens."
+  privacy: "Construit pour l'ouverture et la rapidité. Pas de trackers. Pas de cookies."
+  accessibility: "Conseils clavier : Tab pour déplacer le focus. Shift+Tab pour revenir en arrière. Entrée pour activer les boutons et les liens."
+  a11y_info: "Ce site vise à respecter les normes WCAG 2.2 AA avec une navigation au clavier appropriée, des indicateurs de focus, un contraste de couleur et une prise en charge des lecteurs d'écran."
+  report_issues: "Signaler des problèmes d'accessibilité"
 
 # Language switcher
 language_switcher:

@@ -9,6 +9,7 @@
   <!-- Basic, readable system font stack -->
   <style>
     :root {
+      /* Dark theme (default) */
       --bg: #0b0f14;
       --surface: #121821;
       --text: #f5f7fa;
@@ -16,6 +17,30 @@
       --accent: #4cc38a; /* green - passes contrast on dark */
       --focus: #ffcc00;  /* high contrast focus outline */
       --error: #ff6b6b;
+      --border: #1f2937;
+      --card-bg: #0f141c;
+      --header-gradient-start: #0f1722;
+      --header-gradient-end: #0b0f14;
+      --border-dark: #2a3545;
+      --notice-bg: #122335;
+      --maxw: 72rem;
+    }
+    
+    /* Light theme */
+    :root[data-theme="light"] {
+      --bg: #f5f7fa;
+      --surface: #ffffff;
+      --text: #121821;
+      --muted: #4a5568;
+      --accent: #38a169; /* darker green for better contrast on light */
+      --focus: #2b6cb0; /* blue focus for light mode */
+      --error: #e53e3e;
+      --border: #e2e8f0;
+      --card-bg: #f0f4f8;
+      --header-gradient-start: #e6edf5;
+      --header-gradient-end: #f5f7fa;
+      --border-dark: #cbd5e0;
+      --notice-bg: #ebf8ff;
       --maxw: 72rem;
     }
 
@@ -42,8 +67,8 @@
     }
 
     header {
-      background: linear-gradient(180deg, #0f1722, #0b0f14);
-      border-bottom: 1px solid #1f2937;
+      background: linear-gradient(180deg, var(--header-gradient-start), var(--header-gradient-end));
+      border-bottom: 1px solid var(--border);
       position: relative; /* Added for language switcher positioning */
     }
     .wrap { max-width: var(--maxw); margin: 0 auto; padding: 1rem 1rem 2rem; }
@@ -60,10 +85,24 @@
       padding: .75rem 1rem;
       border-radius: .5rem;
       margin-right: .5rem;
+      text-align: center;
     }
-    .cta:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
+    .cta:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-decoration: underline;
+    }
+    .cta:focus { 
+      outline: 3px solid var(--focus); 
+      outline-offset: 2px; 
+      text-decoration: underline;
+    }
+    .cta:active {
+      transform: translateY(1px);
+    }
 
-    main { border-top: 1px solid #1f2937; background: var(--surface); }
+    main { border-top: 1px solid var(--border); background: var(--surface); }
     section { padding: 2rem 1rem; }
     h2 { font-size: clamp(1.25rem, 2vw, 1.75rem); margin: 0 0 .75rem; }
 
@@ -71,32 +110,151 @@
     @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
 
     .card {
-      background: #0f141c;
-      border: 1px solid #1f2937;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
       border-radius: .75rem;
       padding: 1rem;
+      box-sizing: border-box;
+      width: 100%;
+      overflow: hidden; /* Prevent content from overflowing */
     }
     .card h3 { margin: 0 0 .5rem; font-size: 1.15rem; }
-    .card h3 a { color: var(--text); text-decoration: none; }
-    .card h3 a:hover, .card h3 a:focus { color: var(--accent); text-decoration: underline; }
+    .card h3 a { 
+      color: var(--text); 
+      text-decoration: none; 
+      display: inline-block;
+      padding: 0.1rem 0.2rem;
+      margin: -0.1rem -0.2rem;
+      border-radius: 0.25rem;
+    }
+    .card h3 a:hover, .card h3 a:focus { 
+      color: var(--accent); 
+      text-decoration: underline; 
+    }
+    .card h3 a:focus {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
     .card p { margin-bottom: .5rem; }
     .card p:last-child { margin-bottom: 0; }
-    .card .links a { color: var(--muted); }
+    .card .links a { 
+      color: var(--muted); 
+      text-decoration: underline;
+      padding: 0.1rem 0.2rem;
+      border-radius: 0.25rem;
+    }
+    .card .links a:hover {
+      color: var(--text);
+    }
+    .card .links a:focus {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+      color: var(--text);
+    }
 
-    label { display: block; font-weight: 600; margin-top: .75rem; }
+    label { 
+      display: block; 
+      font-weight: 600; 
+      margin-top: .75rem; 
+      margin-bottom: 0.25rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      max-width: 100%;
+    }
+    
+    #companyForm {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    
     input[type="text"], input[type="url"], input[type="email"] {
       width: 100%;
-      background: #0b0f14;
+      box-sizing: border-box;
+      background: var(--bg);
       color: var(--text);
-      border: 1px solid #2a3545;
+      border: 2px solid var(--border-dark);
       border-radius: .5rem;
       padding: .6rem .7rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 0.25rem;
     }
-    input:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
+    input:focus { 
+      outline: 3px solid var(--focus); 
+      outline-offset: 2px; 
+      border-color: var(--accent);
+    }
+    input::placeholder {
+      color: var(--muted);
+      opacity: 0.7;
+    }
 
     .hint { color: var(--muted); font-size: .95rem; }
     .req { font-weight: 700; }
     .actions { margin-top: 1rem; display: flex; gap: .5rem; flex-wrap: wrap; }
+    
+    /* Improved error handling styles */
+    #errorSummary {
+      background-color: #ffeded;
+      border-left: 4px solid var(--error);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 0.25rem;
+    }
+    
+    /* Responsive form layout */
+    @media (max-width: 480px) {
+      label {
+        font-size: 0.95rem;
+      }
+      
+      #companyForm {
+        padding: 0.75rem;
+      }
+    }
+    
+    #errorSummary:focus {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+    
+    #errorSummary.has-error {
+      animation: errorPulse 0.5s ease-out;
+    }
+    
+    .error-heading {
+      color: var(--error);
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+    
+    /* Add animation for error messages */
+    @keyframes errorPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+    
+    /* Better styles for the output area */
+    #output {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background-color: var(--card-bg);
+      border-radius: 0.25rem;
+    }
+    
+    #output:focus {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+    
+    .output-link {
+      word-break: break-all;
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
     .button {
       background: var(--accent);
       color: #0b0f14;
@@ -105,22 +263,87 @@
       padding: .7rem 1rem;
       font-weight: 700;
       cursor: pointer;
+      text-decoration: none; /* For links styled as buttons */
+      display: inline-block; /* For links styled as buttons */
+      text-align: center; /* For links styled as buttons */
     }
-    .button.secondary { background: transparent; border: 1px solid #2a3545; color: var(--text); }
-    .button:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
+    .button.secondary { 
+      background: transparent; 
+      border: 1px solid var(--border-dark); 
+      color: var(--text); 
+    }
+    .button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .button:focus { 
+      outline: 3px solid var(--focus); 
+      outline-offset: 2px; 
+      text-decoration: underline;
+    }
+    .button:active {
+      transform: translateY(1px);
+    }
 
-    .notice { background: #122335; border-left: 4px solid var(--accent); padding: .75rem 1rem; border-radius: .5rem; }
+    .notice { background: var(--notice-bg); border-left: 4px solid var(--accent); padding: .75rem 1rem; border-radius: .5rem; }
 
     footer { padding: 2rem 1rem; color: var(--muted); font-size: .95rem; }
+    .footer-link { color: var(--muted); text-decoration: underline; }
+    .footer-link:hover, .footer-link:focus { color: var(--accent); }
+    .a11y-info { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; }
 
     /* Respect user motion preferences */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
     }
+    
+    /* Theme toggle styles */
+    .theme-toggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 110; /* above language switcher */
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text);
+      font-size: 1.25rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      padding: 0; /* Remove default button padding */
+      outline: none; /* Remove default button outline */
+    }
+    
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .theme-toggle:focus {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+    
+    /* Adjust language switcher position to make room for theme toggle */
+    .lang-switcher {
+      top: 1rem;
+      right: 4rem !important;
+    }
   </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
+
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light mode">
+    <span id="theme-toggle-icon">☀️</span>
+  </button>
 
   <header role="banner">
     <div class="wrap hero">
@@ -128,8 +351,8 @@
       <p class="lede" data-i18n="app.tagline">We are building a global list of service companies that use and contribute to Free and Open Source Software for government digital services. Contribute your company by Pull Request or GitHub Issue.</p>
       <p class="lede" data-i18n="app.description">Open innovation enables governments to adapt, experiment, and avoid lock-in. Collaboration is essential to healthy democracies. Public code strengthens digital public goods.</p>
       <div class="actions" aria-label="Primary actions">
-        <a id="prLink" class="cta" href="#form" data-i18n="nav.add_company">Add your company</a>
-        <a id="issueLinkTop" class="cta" href="#form" data-i18n="nav.create_issue">Create a GitHub Issue</a>
+        <a id="prLink" class="cta" href="#companies" data-i18n="nav.add_company">Add your company</a>
+        <a id="issueLinkTop" class="cta" href="#companies" data-i18n="nav.create_issue">Create a GitHub Issue</a>
       </div>
     </div>
   </header>
@@ -150,6 +373,13 @@
           <div class="card">
             <p class="notice" role="note" data-i18n="contribute.data_notice">This page does not collect or store form data. The form below generates a prefilled GitHub Issue link or PR payload for you to submit to the repository.</p>
           </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="companies">
+        <h2 id="companies" data-i18n="companies.title">Listed Companies</h2>
+        <div id="company-list" class="grid">
+          <p data-i18n="companies.loading">Loading companies...</p>
         </div>
       </section>
 
@@ -184,16 +414,9 @@
             <button type="button" class="button secondary" id="buildCsvRow" data-i18n="form.build_csv">Build CSV row for PR</button>
           </div>
 
-          <div id="errorSummary" class="notice" role="alert" aria-live="polite" hidden></div>
-          <div id="output" class="card" aria-live="polite" hidden></div>
+          <div id="errorSummary" class="notice" role="alert" aria-live="assertive" tabindex="-1" hidden></div>
+          <div id="output" class="card" aria-live="polite" tabindex="-1" hidden></div>
         </form>
-      </section>
-
-      <section aria-labelledby="companies">
-        <h2 id="companies" data-i18n="companies.title">Listed Companies</h2>
-        <div id="company-list" class="grid">
-          <p data-i18n="companies.loading">Loading companies...</p>
-        </div>
       </section>
 
       <section aria-labelledby="criteria">
@@ -211,6 +434,7 @@
     <div class="wrap">
       <p data-i18n="footer.privacy">Built for openness and speed. No trackers. No cookies.</p>
       <p data-i18n="footer.accessibility">Keyboard tips: Tab to move focus. Shift+Tab to go back. Enter to activate buttons and links.</p>
+      <p class="a11y-info"><span data-i18n="footer.a11y_info">This site aims to meet WCAG 2.2 AA standards with proper keyboard navigation, focus indicators, color contrast, and screen reader support.</span> <a href="https://github.com/mgifford/foss4gov/issues" class="footer-link" data-i18n="footer.report_issues">Report accessibility issues</a>.</p>
     </div>
   </footer>
 
@@ -222,6 +446,81 @@
   
   <!-- Load internationalization script -->
   <script src="i18n.js"></script>
+  
+  <!-- Theme switcher functionality -->
+  <script>
+    // Theme switching functionality
+    (function() {
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeToggleIcon = document.getElementById('theme-toggle-icon');
+      const htmlRoot = document.getElementById('htmlRoot');
+      const DARK_THEME = 'dark';
+      const LIGHT_THEME = 'light';
+      const THEME_STORAGE_KEY = 'foss4gov-theme-preference';
+      
+      // Check for saved theme preference or use browser default
+      function getPreferredTheme() {
+        const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+        if (savedTheme) {
+          return savedTheme;
+        }
+        // Check browser preference
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? DARK_THEME : LIGHT_THEME;
+      }
+      
+      // Apply theme
+      function applyTheme(theme) {
+        if (theme === LIGHT_THEME) {
+          htmlRoot.setAttribute('data-theme', LIGHT_THEME);
+          themeToggleIcon.textContent = '🌙'; // Moon for light mode (to switch to dark)
+          themeToggle.setAttribute('aria-label', 'Switch to dark mode');
+          themeToggle.setAttribute('title', 'Switch to dark mode');
+        } else {
+          htmlRoot.removeAttribute('data-theme');
+          themeToggleIcon.textContent = '☀️'; // Sun for dark mode (to switch to light)
+          themeToggle.setAttribute('aria-label', 'Switch to light mode');
+          themeToggle.setAttribute('title', 'Switch to light mode');
+        }
+      }
+      
+      // Initialize theme
+      function initTheme() {
+        const theme = getPreferredTheme();
+        applyTheme(theme);
+      }
+      
+      // Toggle theme
+      function toggleTheme() {
+        const currentTheme = htmlRoot.getAttribute('data-theme') === LIGHT_THEME ? LIGHT_THEME : DARK_THEME;
+        const newTheme = currentTheme === DARK_THEME ? LIGHT_THEME : DARK_THEME;
+        
+        applyTheme(newTheme);
+        localStorage.setItem(THEME_STORAGE_KEY, newTheme);
+      }
+      
+      // Set up event listeners
+      if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+        // Add keyboard support
+        themeToggle.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleTheme();
+          }
+        });
+      }
+      
+      // Initialize theme on page load
+      initTheme();
+      
+      // Update theme if browser preference changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem(THEME_STORAGE_KEY)) {
+          applyTheme(e.matches ? DARK_THEME : LIGHT_THEME);
+        }
+      });
+    })();
+  </script>
   
   <script>
     // Configuration - set your repository here
@@ -345,13 +644,20 @@
       const translations = window.i18n.currentTranslations() || {};
       const el = document.getElementById("errorSummary");
       el.hidden = false;
-      el.textContent = msg || translations.form?.validation?.required_fields || 'Please fill in all required fields';
+      // Use an error heading for better screen reader announcement
+      const errorHeading = translations.form?.validation?.error_heading || 'Form Error:';
+      el.innerHTML = `<h3 class="error-heading">${errorHeading}</h3><p>${msg || translations.form?.validation?.required_fields || 'Please fill in all required fields'}</p>`;
+      // Set focus to the error message for immediate feedback
+      el.focus();
+      // Add error class to help with styling
+      el.classList.add('has-error');
     }
 
     function clearError() {
       const el = document.getElementById("errorSummary");
       el.hidden = true;
-      el.textContent = "";
+      el.innerHTML = "";
+      el.classList.remove('has-error');
     }
 
     function getFields() {
@@ -373,11 +679,17 @@
         return false;
       }
       
-      // Add https:// prefix if missing from website URL
-      if (!fields.website.match(/^https?:\/\//)) {
-        fields.website = 'https://' + fields.website;
-        document.getElementById("website").value = fields.website;
-      }
+      // Handle URL fields by automatically adding https:// prefix if missing
+      ['website', 'linkedin', 'github', 'otherRepo'].forEach(field => {
+        if (fields[field] && fields[field].trim() !== '') {
+          // If URL doesn't start with http:// or https://, add https://
+          if (!fields[field].match(/^https?:\/\//i)) {
+            fields[field] = 'https://' + fields[field];
+            // Update the input field with the corrected URL
+            document.getElementById(field).value = fields[field];
+          }
+        }
+      });
       
       // Validate website URL
       try {
@@ -389,7 +701,8 @@
       
       // Validate email if provided
       if (fields.email && !fields.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-        setError('Please enter a valid email address.');
+        const emailError = window.i18n.currentTranslations()?.form?.validation?.invalid_email || 'Please enter a valid email address.';
+        setError(emailError);
         return false;
       }
       
@@ -410,7 +723,32 @@
       await window.i18n.loadCompanies();
     }
 
+    // Add proper keyboard interaction for all interactive elements
     document.addEventListener('DOMContentLoaded', () => {
+      // Make sure all focusable elements have proper keyboard interaction
+      const focusableElements = document.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      focusableElements.forEach(el => {
+        // If the element doesn't already have a keydown listener for accessibility
+        if (!el.hasAttribute('data-keyboard-accessible')) {
+          el.setAttribute('data-keyboard-accessible', 'true');
+          
+          // Only add for elements that don't already have key handlers
+          if (el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA' && el.tagName !== 'SELECT') {
+            el.addEventListener('keydown', function(e) {
+              if (e.key === 'Enter' || e.key === ' ') {
+                if (el.tagName === 'A' && e.key === ' ') {
+                  e.preventDefault();
+                  el.click();
+                } else if (el.tagName === 'BUTTON' || el.getAttribute('role') === 'button') {
+                  e.preventDefault();
+                  el.click();
+                }
+              }
+            });
+          }
+        }
+      });
+      
       // Initialize internationalization first
       window.i18n.initI18n();
       
@@ -424,27 +762,52 @@
       console.log('Available languages:', Object.keys(LANGUAGES).join(', '));
       
       // Attach all event listeners after the DOM is ready
-      document.getElementById("buildIssue").addEventListener("click", () => {
+      // Function to handle the issue link generation
+      function handleBuildIssue() {
         const fields = getFields();
         if (!validate(fields)) return;
-          const url = buildIssueLink(fields);
-          const out = document.getElementById("output");
-          out.hidden = false;
-          const translations = window.i18n.currentTranslations() || {};
-          const issueLinkLabel = translations.form?.output?.issue_link || 'GitHub Issue Link:';
-          out.innerHTML = `<p><strong>${issueLinkLabel}</strong><br><a href="${url}">${url}</a></p>`;
-          document.getElementById("issueLinkTop").href = url;
-        });
+        const url = buildIssueLink(fields);
+        const out = document.getElementById("output");
+        out.hidden = false;
+        const translations = window.i18n.currentTranslations() || {};
+        const issueLinkLabel = translations.form?.output?.issue_link || 'GitHub Issue Link:';
+        out.innerHTML = `<p><strong>${issueLinkLabel}</strong><br><a href="${url}" class="output-link">${url}</a></p>`;
+        document.getElementById("issueLinkTop").href = url;
+        // Move focus to the output for screen readers
+        out.focus();
+      }
 
-        document.getElementById("buildCsvRow").addEventListener("click", () => {
-          const fields = getFields();
-          if (!validate(fields)) return;
-          const csvRow = buildCsvRow(fields);
-          const out = document.getElementById("output");
-          out.hidden = false;
-          const csvRowLabel = getTranslation('form.output.csv_row') || 'CSV Row:';
-          out.innerHTML = `<p><strong>${csvRowLabel}</strong></p><pre><code>${csvRow}</code></pre>`;
-        });
+      // Function to handle CSV row generation
+      function handleBuildCsvRow() {
+        const fields = getFields();
+        if (!validate(fields)) return;
+        const csvRow = buildCsvRow(fields);
+        const out = document.getElementById("output");
+        out.hidden = false;
+        const csvRowLabel = getTranslation('form.output.csv_row') || 'CSV Row:';
+        out.innerHTML = `<p><strong>${csvRowLabel}</strong></p><pre><code>${csvRow}</code></pre>`;
+        // Move focus to the output for screen readers
+        out.focus();
+      }
+
+      // Add click event listeners
+      document.getElementById("buildIssue").addEventListener("click", handleBuildIssue);
+      document.getElementById("buildCsvRow").addEventListener("click", handleBuildCsvRow);
+
+      // Add keyboard event listeners for accessibility
+      document.getElementById("buildIssue").addEventListener("keydown", function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleBuildIssue();
+        }
+      });
+
+      document.getElementById("buildCsvRow").addEventListener("keydown", function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleBuildCsvRow();
+        }
+      });
 
         // Set top links to go to contribute section by default
         document.getElementById("prLink").href = "#form";

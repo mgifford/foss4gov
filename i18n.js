@@ -394,6 +394,8 @@ function createLanguageSwitcher() {
   // Create the language switcher container
   const switcher = document.createElement('div');
   switcher.className = 'lang-switcher';
+  switcher.setAttribute('role', 'navigation');
+  switcher.setAttribute('aria-label', 'Language selection');
   
   // Create the language options
   const langList = document.createElement('div');
@@ -402,8 +404,10 @@ function createLanguageSwitcher() {
   // Create language label
   const label = document.createElement('span');
   label.className = 'lang-label';
+  label.id = 'lang-selector-label';
   label.textContent = 'Language: ';
   langList.appendChild(label);
+  langList.setAttribute('aria-labelledby', 'lang-selector-label');
   
   Object.entries(LANGUAGES).forEach(([code, data]) => {
     const langLink = document.createElement('a');
@@ -414,11 +418,21 @@ function createLanguageSwitcher() {
     langLink.setAttribute('data-lang', code);
     langLink.setAttribute('lang', code);  // Add lang attribute for screen readers and browsers
     langLink.textContent = data.name;
+    langLink.setAttribute('aria-label', `Switch to ${data.name}`);
+    langLink.setAttribute('role', 'button');
     langLink.addEventListener('click', function(e) {
       e.preventDefault();
       // Change the URL and reload the page
       window.location.href = langLink.href;
       return false;
+    });
+    // Add keyboard event listener
+    langLink.addEventListener('keydown', function(e) {
+      // Handle Enter and Space
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        window.location.href = langLink.href;
+      }
     });
     langList.appendChild(langLink);
   });
@@ -446,7 +460,7 @@ function createLanguageSwitcher() {
       background: var(--surface);
       padding: 0.5rem;
       border-radius: 0.5rem;
-      border: 1px solid #1f2937;
+      border: 1px solid var(--border);
       align-items: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
@@ -456,13 +470,14 @@ function createLanguageSwitcher() {
       font-weight: bold;
     }
     .lang-list a {
-      color: var(--muted);
+      color: var(--text);
       text-decoration: none;
       padding: 0.25rem 0.5rem;
       border-radius: 0.25rem;
       cursor: pointer;
       transition: all 0.2s ease;
       border: 1px solid transparent;
+      display: inline-block;
     }
     .lang-list a.active {
       background: var(--accent);
@@ -471,9 +486,13 @@ function createLanguageSwitcher() {
       border-color: #0b0f14;
     }
     .lang-list a:hover:not(.active) {
-      color: var(--text);
-      background: #1f2937;
+      background: var(--border);
       transform: translateY(-2px);
+    }
+    .lang-list a:focus {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+      text-decoration: underline;
     }
   `;
   document.head.appendChild(style);
@@ -526,17 +545,27 @@ Jadu,,https://www.jadu.net,info@jadu.net,https://linkedin.com/company/jadu,https
       const card = document.createElement('div');
       card.className = 'card';
 
-      let links = [
-        company.github ? `<a href="${company.github}">GitHub</a>` : null,
-        company.linkedin ? `<a href="${company.linkedin}">LinkedIn</a>` : null,
-        company.otherRepo ? `<a href="${company.otherRepo}">Git Repo</a>` : null,
-        company.email ? `<a href="mailto:${company.email}">Email</a>` : null,
-      ].filter(Boolean).join(' | ');
+      // Create links without tabindex
+      let links = [];
+      if (company.github) {
+        links.push(`<a href="${company.github}">GitHub</a>`);
+      }
+      if (company.linkedin) {
+        links.push(`<a href="${company.linkedin}">LinkedIn</a>`);
+      }
+      if (company.otherRepo) {
+        links.push(`<a href="${company.otherRepo}">Git Repo</a>`);
+      }
+      if (company.email) {
+        links.push(`<a href="mailto:${company.email}">Email</a>`);
+      }
+      
+      const linksHtml = links.length > 0 ? links.join(' | ') : '';
 
       card.innerHTML = `
         <h3><a href="${company.website}" rel="noopener noreferrer">${company.name}</a></h3>
         ${company.english ? `<p><em>(${company.english})</em></p>` : ''}
-        ${links ? `<p class="links">${links}</p>` : ''}
+        ${linksHtml ? `<p class="links">${linksHtml}</p>` : ''}
       `;
       listContainer.appendChild(card);
     });

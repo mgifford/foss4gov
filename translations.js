@@ -50,7 +50,9 @@ const FALLBACK_TRANSLATIONS = {
       submit: "Submit",
       validation: {
         required_fields: "Please fill in all required fields.",
-        invalid_url: "Please enter a valid URL."
+        invalid_url: "Please enter a valid URL.",
+        invalid_email: "Please enter a valid email address.",
+        error_heading: "Form Error:"
       },
       output: {
         issue_link: "GitHub Issue Link:",
@@ -63,9 +65,14 @@ const FALLBACK_TRANSLATIONS = {
       confirmation: "Confirmation:",
       confirmation_text: "I confirm this company meets the requirements for inclusion."
     },
+    navigation: {
+      skip_to_form: "Skip to submission form"
+    },
     footer: {
       privacy: "Built for openness and speed. No trackers. No cookies.",
-      accessibility: "Keyboard tips: Tab to move focus. Shift+Tab to go back. Enter to activate buttons and links."
+      accessibility: "Keyboard tips: Tab to move focus. Shift+Tab to go back. Enter to activate buttons and links.",
+      a11y_info: "This site aims to meet WCAG 2.2 AA standards with proper keyboard navigation, focus indicators, color contrast, and screen reader support.",
+      report_issues: "Report accessibility issues"
     }
   },
   fr: {
@@ -116,7 +123,9 @@ const FALLBACK_TRANSLATIONS = {
       submit: "Soumettre",
       validation: {
         required_fields: "Veuillez remplir tous les champs obligatoires.",
-        invalid_url: "Veuillez entrer une URL valide."
+        invalid_url: "Veuillez entrer une URL valide.",
+        invalid_email: "Veuillez entrer une adresse email valide.",
+        error_heading: "Erreur de formulaire:"
       },
       output: {
         issue_link: "Lien de l'Issue GitHub:",
@@ -129,9 +138,14 @@ const FALLBACK_TRANSLATIONS = {
       confirmation: "Confirmation:",
       confirmation_text: "Je confirme que cette entreprise répond aux critères d'inclusion."
     },
+    navigation: {
+      skip_to_form: "Passer au formulaire de soumission"
+    },
     footer: {
       privacy: "Construit pour l'ouverture et la rapidité. Pas de trackers. Pas de cookies.",
-      accessibility: "Conseils clavier: Tab pour déplacer le focus. Shift+Tab pour revenir en arrière. Entrée pour activer les boutons et les liens."
+      accessibility: "Conseils clavier: Tab pour déplacer le focus. Shift+Tab pour revenir en arrière. Entrée pour activer les boutons et les liens.",
+      a11y_info: "Ce site vise à respecter les normes WCAG 2.2 AA avec une navigation au clavier appropriée, des indicateurs de focus, un contraste de couleur et une prise en charge des lecteurs d'écran.",
+      report_issues: "Signaler des problèmes d'accessibilité"
     }
   },
   de: {

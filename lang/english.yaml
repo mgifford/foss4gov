@@ -61,6 +61,9 @@ form:
     build_csv: "Build CSV row for PR"
   validation:
     required_fields: "Name and Website are required."
+    invalid_url: "Please enter a valid URL."
+    invalid_email: "Please enter a valid email address."
+    error_heading: "Form Error:"
   output:
     issue_link: "Open this link to create your prefilled GitHub Issue:"
     csv_row: "Copy this line into <code>companies.csv</code> and submit a PR:"
@@ -80,10 +83,16 @@ criteria:
     - "Documented contributions to upstream projects. Examples include merged pull requests, maintainership, or financial support with transparency."
     - "Clear governance and security practices. Preference for OSI-approved licenses."
 
+# Navigation helpers
+navigation:
+  skip_to_form: "Skip to submission form"
+
 # Footer
 footer:
-  text1: "Built for openness and speed. No trackers. No cookies."
-  text2: "Keyboard tips: Tab to move focus. Shift+Tab to go back. Enter to activate buttons and links."
+  privacy: "Built for openness and speed. No trackers. No cookies."
+  accessibility: "Keyboard tips: Tab to move focus. Shift+Tab to go back. Enter to activate buttons and links."
+  a11y_info: "This site aims to meet WCAG 2.2 AA standards with proper keyboard navigation, focus indicators, color contrast, and screen reader support."
+  report_issues: "Report accessibility issues"
 
 # Language switcher
 language_switcher:
