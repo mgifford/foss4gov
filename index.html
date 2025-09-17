@@ -537,6 +537,17 @@
       const formattedLinkedIn = formatLinkedIn(fields.linkedin);
       const formattedGitHub = formatGitHub(fields.github);
       
+      // Generate CSV format for the issue
+      const csvRow = [
+        fields.name,
+        fields.english || "",
+        fields.website,
+        fields.email || "",
+        formattedLinkedIn || "",
+        formattedGitHub || "",
+        fields.otherRepo || ""
+      ].join(", ");
+      
       // Safe access to translations with fallbacks
       const title = (translations.issue?.title || 'Add {name} to FOSS4Gov').replace('{name}', fields.name);
       const bodyLines = [
@@ -549,7 +560,11 @@
         formattedGitHub ? `- GitHub: ${formattedGitHub}` : null,
         fields.otherRepo ? `- Other public Git repo: ${fields.otherRepo}` : null,
         "\n" + (translations.issue?.confirmation || 'Confirmation:'),
-        translations.issue?.confirmation_text || 'I confirm this company meets the requirements for inclusion.'
+        translations.issue?.confirmation_text || 'I confirm this company meets the requirements for inclusion.',
+        "\n" + "CSV Format:",
+        "```",
+        csvRow,
+        "```"
       ].filter(Boolean).join("\n");
 
       const params = new URLSearchParams({
