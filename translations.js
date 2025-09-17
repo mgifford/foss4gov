@@ -5,7 +5,8 @@ const FALLBACK_TRANSLATIONS = {
   en: {
     app: {
       title: "FOSS4Gov",
-      tagline: "Open Source Companies for Government"
+      tagline: "Open Source Companies for Government",
+      description: "Open innovation allows governments to adapt, experiment, and avoid lock-in. Collaboration is essential to healthy democracies. Public code strengthens digital public goods."
     },
     nav: {
       home: "Home",
@@ -37,7 +38,7 @@ const FALLBACK_TRANSLATIONS = {
     form: {
       title: "Generate your submission",
       required_notice: "Fields marked with * are required.",
-      name: "Name *",
+      name: "Company name *",
       english: "English alternative (if applicable)",
       website: "Website *",
       email: "Info email",
@@ -70,7 +71,8 @@ const FALLBACK_TRANSLATIONS = {
   fr: {
     app: {
       title: "FOSS4Gov",
-      tagline: "Entreprises Open Source pour le Gouvernement"
+      tagline: "Entreprises Open Source pour le Gouvernement",
+      description: "L'innovation ouverte permet aux gouvernements de s'adapter, d'expérimenter et d'éviter l'enfermement. La collaboration est essentielle aux démocraties saines. Le code public renforce les biens publics numériques."
     },
     nav: {
       home: "Accueil",
@@ -102,7 +104,7 @@ const FALLBACK_TRANSLATIONS = {
     form: {
       title: "Générer votre soumission",
       required_notice: "Les champs marqués d'un * sont obligatoires.",
-      name: "Nom *",
+      name: "Nom de l'entreprise *",
       english: "Alternative en anglais (si applicable)",
       website: "Site Web *",
       email: "Email d'info",
@@ -135,7 +137,8 @@ const FALLBACK_TRANSLATIONS = {
   de: {
     app: {
       title: "FOSS4Gov",
-      tagline: "Open-Source-Unternehmen für die Regierung"
+      tagline: "Open-Source-Unternehmen für die Regierung",
+      description: "Offene Innovation ermöglicht es Regierungen, sich anzupassen, zu experimentieren und Abhängigkeiten zu vermeiden. Zusammenarbeit ist wesentlich für gesunde Demokratien. Öffentlicher Code stärkt digitale öffentliche Güter."
     },
     nav: {
       home: "Startseite",
@@ -167,7 +170,7 @@ const FALLBACK_TRANSLATIONS = {
     form: {
       title: "Generieren Sie Ihre Einreichung",
       required_notice: "Felder mit * sind Pflichtfelder.",
-      name: "Name *",
+      name: "Firmenname *",
       english: "Englische Alternative (falls zutreffend)",
       website: "Webseite *",
       email: "Info-E-Mail",
@@ -200,7 +203,8 @@ const FALLBACK_TRANSLATIONS = {
   nl: {
     app: {
       title: "FOSS4Gov",
-      tagline: "Open Source Bedrijven voor de Overheid"
+      tagline: "Open Source Bedrijven voor de Overheid",
+      description: "Open innovatie stelt overheden in staat om zich aan te passen, te experimenteren en lock-in te voorkomen. Samenwerking is essentieel voor gezonde democratieën. Publieke code versterkt digitale publieke goederen."
     },
     nav: {
       home: "Home",
@@ -232,7 +236,7 @@ const FALLBACK_TRANSLATIONS = {
     form: {
       title: "Genereer uw inzending",
       required_notice: "Velden gemarkeerd met * zijn verplicht.",
-      name: "Naam *",
+      name: "Bedrijfsnaam *",
       english: "Engelse alternatief (indien van toepassing)",
       website: "Website *",
       email: "Info e-mail",
@@ -265,7 +269,8 @@ const FALLBACK_TRANSLATIONS = {
   es: {
     app: {
       title: "FOSS4Gov",
-      tagline: "Empresas de Código Abierto para el Gobierno"
+      tagline: "Empresas de Código Abierto para el Gobierno",
+      description: "La innovación abierta permite a los gobiernos adaptarse, experimentar y evitar el bloqueo. La colaboración es esencial para las democracias saludables. El código público fortalece los bienes públicos digitales."
     },
     nav: {
       home: "Inicio",
@@ -297,7 +302,7 @@ const FALLBACK_TRANSLATIONS = {
     form: {
       title: "Genere su presentación",
       required_notice: "Los campos marcados con * son obligatorios.",
-      name: "Nombre *",
+      name: "Nombre de la empresa *",
       english: "Alternativa en inglés (si aplica)",
       website: "Sitio web *",
       email: "Correo electrónico de info",
@@ -330,7 +335,8 @@ const FALLBACK_TRANSLATIONS = {
   it: {
     app: {
       title: "FOSS4Gov",
-      tagline: "Aziende Open Source per il Governo"
+      tagline: "Aziende Open Source per il Governo",
+      description: "L'innovazione aperta consente ai governi di adattarsi, sperimentare ed evitare il lock-in. La collaborazione è essenziale per democrazie sane. Il codice pubblico rafforza i beni pubblici digitali."
     },
     nav: {
       home: "Home",
@@ -362,7 +368,7 @@ const FALLBACK_TRANSLATIONS = {
     form: {
       title: "Genera la tua sottomissione",
       required_notice: "I campi contrassegnati con * sono obbligatori.",
-      name: "Nome *",
+      name: "Nome dell'azienda *",
       english: "Alternativa inglese (se applicabile)",
       website: "Sito web *",
       email: "Email informativa",

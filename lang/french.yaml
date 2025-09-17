@@ -8,9 +8,12 @@ header:
   title: "Souveraineté Numérique Grâce à l'Open Source"
   lede1: "Nous construisons une liste mondiale d'entreprises de services qui utilisent et contribuent aux logiciels libres et open source pour les services numériques gouvernementaux. Contribuez avec votre entreprise par Pull Request ou GitHub Issue."
   lede2: "L'innovation ouverte permet aux gouvernements de s'adapter, d'expérimenter et d'éviter l'enfermement. La collaboration est essentielle aux démocraties saines. Le code public renforce les biens publics numériques."
+app:
+  description: "L'innovation ouverte permet aux gouvernements de s'adapter, d'expérimenter et d'éviter l'enfermement. La collaboration est essentielle aux démocraties saines. Le code public renforce les biens publics numériques."
   actions:
     add_company: "Ajouter votre entreprise"
     create_issue: "Créer un problème GitHub"
+  tagline: "Entreprises Open Source pour le Gouvernement"
 
 # How to contribute section
 how_to_contribute:
@@ -28,7 +31,7 @@ form:
   help: "Les champs marqués d'un <span class=\"req\" aria-label=\"obligatoire\">*</span> sont obligatoires."
   fields:
     name:
-      label: "Nom"
+      label: "Nom de l'entreprise"
       required: true
     english:
       label: "Alternative en anglais (si applicable)"

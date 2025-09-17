@@ -6,11 +6,14 @@ skip_link: "Ga naar hoofdinhoud"
 # Header
 header:
   title: "Digitale Soevereiniteit Door Open Source"
-  lede1: "[NL] We are building a global list of service companies that use and contribute to Free and Open Source Software for government digital services. Contribute your company by Pull Request or GitHub Issue."
-  lede2: "[NL] Open innovation enables governments to adapt, experiment, and avoid lock-in. Collaboration is essential to healthy democracies. Public code strengthens digital public goods."
+  lede1: "We bouwen aan een wereldwijde lijst van servicebedrijven die gebruik maken van en bijdragen aan Free and Open Source Software voor digitale overheidsdiensten. Draag je bedrijf bij via Pull Request of GitHub Issue."
+  lede2: "Open innovatie stelt overheden in staat om zich aan te passen, te experimenteren en lock-in te voorkomen. Samenwerking is essentieel voor gezonde democratieën. Publieke code versterkt digitale publieke goederen."
+app:
+  description: "Open innovatie stelt overheden in staat om zich aan te passen, te experimenteren en lock-in te voorkomen. Samenwerking is essentieel voor gezonde democratieën. Publieke code versterkt digitale publieke goederen."
   actions:
     add_company: "Voeg uw bedrijf toe"
     create_issue: "Maak een GitHub Issue"
+  tagline: "Open Source Bedrijven voor de Overheid"
 
 # How to contribute section
 how_to_contribute:
@@ -28,7 +31,7 @@ form:
   help: "[NL] Fields marked with <span class=\"req\" aria-label=\"required\">*</span> are required."
   fields:
     name:
-      label: "Naam"
+      label: "Bedrijfsnaam"
       required: true
     english:
       label: "Engelse alternatief (indien van toepassing)"

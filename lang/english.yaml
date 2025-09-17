@@ -8,9 +8,12 @@ header:
   title: "Digital Sovereignty Through Open Source"
   lede1: "We are building a global list of service companies that use and contribute to Free and Open Source Software for government digital services. Contribute your company by Pull Request or GitHub Issue."
   lede2: "Open innovation enables governments to adapt, experiment, and avoid lock-in. Collaboration is essential to healthy democracies. Public code strengthens digital public goods."
+app:
+  description: "Open innovation enables governments to adapt, experiment, and avoid lock-in. Collaboration is essential to healthy democracies. Public code strengthens digital public goods."
   actions:
     add_company: "Add your company"
     create_issue: "Create a GitHub Issue"
+  tagline: "Open Source Companies for Government"
 
 # How to contribute section
 how_to_contribute:
@@ -28,7 +31,7 @@ form:
   help: "Fields marked with <span class=\"req\" aria-label=\"required\">*</span> are required."
   fields:
     name:
-      label: "Name"
+      label: "Company name"
       required: true
     english:
       label: "English alternative (if applicable)"

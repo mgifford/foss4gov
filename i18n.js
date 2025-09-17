@@ -68,7 +68,99 @@ function detectLanguage() {
 function loadTranslations(lang) {
   console.log(`Loading translations for: ${lang}`);
   
-  // Skip fetch entirely and use fallback translations
+  // Always ensure we have the fallback translations
+  if (FALLBACK_TRANSLATIONS && FALLBACK_TRANSLATIONS[lang]) {
+    console.log(`Found fallback translations for ${lang}`);
+    translations = FALLBACK_TRANSLATIONS[lang];
+    
+    // Special debug for German
+    if (lang === 'de') {
+      console.log('German translations loaded:', translations);
+      console.log('App title:', translations.app?.title);
+      console.log('Form name label:', translations.form?.name);
+    }
+    
+    // If we're running from a file:// URL, don't try to fetch YAML files
+    // as it will be blocked by CORS. Instead, just use the fallback translations.
+    if (window.location.protocol === 'file:') {
+      console.log('Running from file:// protocol, using fallback translations only');
+      return Promise.resolve(translations);
+    }
+  } else if (lang !== 'en' && FALLBACK_TRANSLATIONS && FALLBACK_TRANSLATIONS['en']) {
+    console.log(`No fallback translations for ${lang}, using English fallback`);
+    translations = FALLBACK_TRANSLATIONS['en'];
+    if (window.location.protocol === 'file:') {
+      return Promise.resolve(translations);
+    }
+  }
+  
+  // If we're running from a server (http/https), try to load YAML files
+  if (LANGUAGES[lang] && LANGUAGES[lang].file) {
+    const langFile = `./lang/${LANGUAGES[lang].file}`;
+    console.log(`Attempting to load language file: ${langFile}`);
+    
+    return fetch(langFile)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to load language file: ${response.status} ${response.statusText}`);
+        }
+        return response.text();
+      })
+      .then(yamlText => {
+        try {
+          // Parse YAML content
+          const yamlData = jsyaml.load(yamlText);
+          console.log(`Successfully loaded and parsed YAML for ${lang}`);
+          
+          // Merge with fallback translations to ensure we have complete data
+          const merged = {};
+          
+          // Use fallback translations as a base
+          if (FALLBACK_TRANSLATIONS && FALLBACK_TRANSLATIONS[lang]) {
+            Object.assign(merged, FALLBACK_TRANSLATIONS[lang]);
+          }
+          
+          // Merge with YAML data, giving priority to YAML
+          if (yamlData) {
+            // Merge top-level properties
+            Object.keys(yamlData).forEach(key => {
+              if (typeof yamlData[key] === 'object' && yamlData[key] !== null) {
+                // For objects, merge deeply
+                merged[key] = merged[key] || {};
+                Object.assign(merged[key], yamlData[key]);
+              } else {
+                // For primitives, just replace
+                merged[key] = yamlData[key];
+              }
+            });
+            
+            // Special handling for app properties that might be at root level
+            if (yamlData.app) {
+              merged.app = merged.app || {};
+              Object.assign(merged.app, yamlData.app);
+            }
+          }
+          
+          translations = merged;
+          return translations;
+        } catch (error) {
+          console.error(`Error parsing YAML for ${lang}:`, error);
+          throw error;
+        }
+      })
+      .catch(error => {
+        console.error(`Error loading language file for ${lang}:`, error);
+        // Fall back to built-in translations
+        if (FALLBACK_TRANSLATIONS && FALLBACK_TRANSLATIONS[lang]) {
+          console.log(`Using fallback translations for ${lang}`);
+          translations = FALLBACK_TRANSLATIONS[lang];
+          return translations;
+        }
+        throw error;
+      });
+  }
+  
+  // If we can't load from file, use fallback translations
   if (FALLBACK_TRANSLATIONS && FALLBACK_TRANSLATIONS[lang]) {
     console.log(`Using built-in fallback translations for ${lang}`);
     translations = FALLBACK_TRANSLATIONS[lang];
@@ -92,15 +184,52 @@ function loadTranslations(lang) {
  * @returns {string|null} The translation or null if not found
  */
 function getTranslation(key) {
+  if (!key) return null;
+  if (!translations) return null;
+  
   const keys = key.split('.');
   let result = translations;
+  
+  // Debug for important keys
+  if (key === 'app.title' || key === 'form.name') {
+    console.log(`Looking up translation for "${key}" in language ${currentLanguage}`);
+  }
   
   for (const k of keys) {
     if (result && typeof result === 'object' && k in result) {
       result = result[k];
     } else {
+      // If we can't find it, try in fallback directly
+      if (FALLBACK_TRANSLATIONS && FALLBACK_TRANSLATIONS[currentLanguage]) {
+        let fallbackResult = FALLBACK_TRANSLATIONS[currentLanguage];
+        let found = true;
+        
+        for (const fallbackKey of keys) {
+          if (fallbackResult && typeof fallbackResult === 'object' && fallbackKey in fallbackResult) {
+            fallbackResult = fallbackResult[fallbackKey];
+          } else {
+            found = false;
+            break;
+          }
+        }
+        
+        if (found && typeof fallbackResult === 'string') {
+          if (key === 'app.title' || key === 'form.name') {
+            console.log(`Found "${key}" in fallback translations: "${fallbackResult}"`);
+          }
+          return fallbackResult;
+        }
+      }
+      
+      if (key === 'app.title' || key === 'form.name') {
+        console.log(`Translation not found for "${key}"`);
+      }
       return null;
     }
+  }
+  
+  if (key === 'app.title' || key === 'form.name') {
+    console.log(`Found translation for "${key}": "${result}"`);
   }
   
   return typeof result === 'string' ? result : null;
@@ -114,6 +243,15 @@ function applyTranslations() {
   if (!translations) {
     console.error('No translations loaded');
     return;
+  }
+  
+  console.log(`Current language: ${currentLanguage}`);
+  console.log('Translation object keys:', Object.keys(translations));
+  
+  // For German debug
+  if (currentLanguage === 'de') {
+    console.log('German app title:', translations.app?.title);
+    console.log('German form name:', translations.form?.name);
   }
 
   // Apply translations to elements with data-i18n attribute
@@ -129,6 +267,11 @@ function applyTranslations() {
         el.value = translation;
       } else {
         el.textContent = translation;
+      }
+      
+      // Debug for specific elements (in German)
+      if (currentLanguage === 'de' && (key === 'app.title' || key === 'form.name')) {
+        console.log(`Applied translation for ${key}: "${translation}"`);
       }
     } else {
       console.warn(`Translation not found for key: ${key}`);
@@ -154,6 +297,20 @@ function applyTranslations() {
 function changeLanguage(lang) {
   console.log(`Changing language to: ${lang}`);
   currentLanguage = lang;
+  
+  // Set the HTML lang attribute for the whole page
+  const htmlRoot = document.getElementById('htmlRoot');
+  if (htmlRoot) {
+    htmlRoot.setAttribute('lang', lang);
+    console.log(`Set HTML lang attribute to: ${lang}`);
+  }
+  
+  // Ensure we have at least the fallback translations loaded immediately
+  if (FALLBACK_TRANSLATIONS && FALLBACK_TRANSLATIONS[lang]) {
+    translations = FALLBACK_TRANSLATIONS[lang];
+    applyTranslations();
+  }
+  
   loadTranslations(lang).then(() => {
     // Apply translations after they're loaded
     applyTranslations();
@@ -180,21 +337,39 @@ function changeLanguage(lang) {
  * Initialize the internationalization system
  */
 function initI18n() {
+  // Check for lang param in URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlLang = urlParams.get('lang');
   // Check for saved language preference
   const savedLang = localStorage.getItem('preferredLanguage');
-  
   // Detect language if no preference saved
   const detectedLang = detectLanguage();
-  
-  // Use saved language, detected language, or default to English
-  currentLanguage = savedLang || detectedLang || 'en';
-  
+  // Use lang from URL, then saved, then detected, then default to English
+  currentLanguage = urlLang || savedLang || detectedLang || 'en';
   console.log(`Initializing i18n with language: ${currentLanguage}`);
+  
+  // Set the HTML lang attribute for the whole page
+  const htmlRoot = document.getElementById('htmlRoot');
+  if (htmlRoot) {
+    htmlRoot.setAttribute('lang', currentLanguage);
+    console.log(`Set HTML lang attribute to: ${currentLanguage}`);
+  } else {
+    console.error('Could not find HTML root element to set language');
+  }
   
   // Create the language switcher UI
   createLanguageSwitcher();
   
-  // Load translations and apply them
+  // Ensure we have the fallback translations loaded first
+  if (FALLBACK_TRANSLATIONS && FALLBACK_TRANSLATIONS[currentLanguage]) {
+    translations = FALLBACK_TRANSLATIONS[currentLanguage];
+    applyTranslations();
+  } else if (FALLBACK_TRANSLATIONS && FALLBACK_TRANSLATIONS['en']) {
+    translations = FALLBACK_TRANSLATIONS['en'];
+    applyTranslations();
+  }
+  
+  // Then try to load and apply translations from YAML files
   loadTranslations(currentLanguage).then(() => {
     // Apply translations after they're loaded
     applyTranslations();
@@ -232,18 +407,19 @@ function createLanguageSwitcher() {
   
   Object.entries(LANGUAGES).forEach(([code, data]) => {
     const langLink = document.createElement('a');
-    langLink.href = '#';
+    // Set the URL to ?lang=xx, preserving other query params
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', code);
+    langLink.href = url.pathname + url.search;
     langLink.setAttribute('data-lang', code);
+    langLink.setAttribute('lang', code);  // Add lang attribute for screen readers and browsers
     langLink.textContent = data.name;
-    
-    // Use a direct event handler with explicit binding for older browsers
     langLink.addEventListener('click', function(e) {
       e.preventDefault();
-      console.log(`Language link clicked: ${code}`);
-      changeLanguage(code);
+      // Change the URL and reload the page
+      window.location.href = langLink.href;
       return false;
     });
-    
     langList.appendChild(langLink);
   });
   
@@ -409,6 +585,24 @@ window.i18n = {
   initI18n,
   changeLanguage,
   loadTranslations,
-  currentTranslations: () => translations,
+  get currentLanguage() { return currentLanguage; },
+  currentTranslations: () => {
+    // Return the current translations object, or a fallback if it's empty
+    if (translations && Object.keys(translations).length > 0) {
+      return translations;
+    }
+    
+    // If translations are empty, try to use the fallback
+    if (FALLBACK_TRANSLATIONS && FALLBACK_TRANSLATIONS[currentLanguage]) {
+      return FALLBACK_TRANSLATIONS[currentLanguage];
+    }
+    
+    // Last resort, use English fallback
+    if (FALLBACK_TRANSLATIONS && FALLBACK_TRANSLATIONS['en']) {
+      return FALLBACK_TRANSLATIONS['en'];
+    }
+    
+    return {};
+  },
   loadCompanies: loadCompanies
 };

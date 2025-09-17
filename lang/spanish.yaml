@@ -6,11 +6,14 @@ skip_link: "Saltar al contenido principal"
 # Header
 header:
   title: "Soberanía Digital a Través del Código Abierto"
-  lede1: "[ES] We are building a global list of service companies that use and contribute to Free and Open Source Software for government digital services. Contribute your company by Pull Request or GitHub Issue."
-  lede2: "[ES] Open innovation enables governments to adapt, experiment, and avoid lock-in. Collaboration is essential to healthy democracies. Public code strengthens digital public goods."
+  lede1: "Estamos construyendo una lista global de empresas de servicios que utilizan y contribuyen al Software Libre y de Código Abierto para servicios digitales gubernamentales. Contribuye con tu empresa mediante Pull Request o GitHub Issue."
+  lede2: "La innovación abierta permite a los gobiernos adaptarse, experimentar y evitar el bloqueo. La colaboración es esencial para las democracias saludables. El código público fortalece los bienes públicos digitales."
+app:
+  description: "La innovación abierta permite a los gobiernos adaptarse, experimentar y evitar el bloqueo. La colaboración es esencial para las democracias saludables. El código público fortalece los bienes públicos digitales."
   actions:
     add_company: "Agregar su empresa"
     create_issue: "Crear un Issue en GitHub"
+  tagline: "Empresas de Código Abierto para el Gobierno"
 
 # How to contribute section
 how_to_contribute:
@@ -28,7 +31,7 @@ form:
   help: "[ES] Fields marked with <span class=\"req\" aria-label=\"required\">*</span> are required."
   fields:
     name:
-      label: "Nombre"
+      label: "Nombre de la empresa"
       required: true
     english:
       label: "Alternativa en inglés (si aplica)"

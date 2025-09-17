@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" id="htmlRoot">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -158,7 +158,7 @@
         <form id="companyForm" class="card" novalidate aria-describedby="formHelp">
           <p id="formHelp" class="hint" data-i18n="form.required_notice">Fields marked with <span class="req" aria-label="required">*</span> are required.</p>
 
-          <label for="name" data-i18n="form.name">Name <span class="req">*</span></label>
+          <label for="name" data-i18n="form.name">Company name <span class="req">*</span></label>
           <input id="name" name="name" type="text" autocomplete="organization" required />
 
           <label for="english" data-i18n="form.english">English alternative (if applicable)</label>
@@ -234,6 +234,10 @@
       // This will use translations from the i18n system
       const translations = window.i18n.currentTranslations() || {};
       
+      // Format LinkedIn and GitHub URLs
+      const formattedLinkedIn = formatLinkedIn(fields.linkedin);
+      const formattedGitHub = formatGitHub(fields.github);
+      
       // Safe access to translations with fallbacks
       const title = (translations.issue?.title || 'Add {name} to FOSS4Gov').replace('{name}', fields.name);
       const bodyLines = [
@@ -242,8 +246,8 @@
         fields.english ? `- English alternative: ${fields.english}` : null,
         `- Website: ${fields.website}`,
         fields.email ? `- Info email: ${fields.email}` : null,
-        fields.linkedin ? `- LinkedIn: ${fields.linkedin}` : null,
-        fields.github ? `- GitHub: ${fields.github}` : null,
+        formattedLinkedIn ? `- LinkedIn: ${formattedLinkedIn}` : null,
+        formattedGitHub ? `- GitHub: ${formattedGitHub}` : null,
         fields.otherRepo ? `- Other public Git repo: ${fields.otherRepo}` : null,
         "\n" + (translations.issue?.confirmation || 'Confirmation:'),
         translations.issue?.confirmation_text || 'I confirm this company meets the requirements for inclusion.'
@@ -260,21 +264,69 @@
       return val ? `${key}: "${val.replace(/"/g, '\\"')}"` : "";
     }
     
+    // Helper functions to format social media URLs
+    function formatLinkedIn(url) {
+      if (!url) return "";
+      
+      // If it's already a full URL, return it
+      if (url.match(/^https?:\/\//i)) return url;
+      
+      // If it's just a username/profile, add the proper prefix
+      if (url.match(/^[a-zA-Z0-9-]+$/)) {
+        return `https://linkedin.com/in/${url}`;
+      }
+      
+      // If it starts with 'linkedin.com', add https://
+      if (url.match(/^linkedin\.com/i)) {
+        return `https://${url}`;
+      }
+      
+      return url;
+    }
+    
+    function formatGitHub(url) {
+      if (!url) return "";
+      
+      // If it's already a full URL, return it
+      if (url.match(/^https?:\/\//i)) return url;
+      
+      // If it's just a username, add the proper prefix
+      if (url.match(/^[a-zA-Z0-9-]+$/)) {
+        return `https://github.com/${url}`;
+      }
+      
+      // If it starts with 'github.com', add https://
+      if (url.match(/^github\.com/i)) {
+        return `https://${url}`;
+      }
+      
+      return url;
+    }
+    
     function buildCsvRow(fields) {
       // Helper to quote and escape existing quotes for a CSV field
       const csvSafe = (str) => `"${(str || '').replace(/"/g, '""')}"`;
+      
+      // Format LinkedIn and GitHub URLs
+      const formattedLinkedIn = formatLinkedIn(fields.linkedin);
+      const formattedGitHub = formatGitHub(fields.github);
+      
       return [
         csvSafe(fields.name),
         csvSafe(fields.english),
         csvSafe(fields.website),
         csvSafe(fields.email),
-        csvSafe(fields.linkedin),
-        csvSafe(fields.github),
+        csvSafe(formattedLinkedIn),
+        csvSafe(formattedGitHub),
         csvSafe(fields.otherRepo)
       ].join(',');
     }
 
     function buildDataYaml(fields) {
+      // Format LinkedIn and GitHub URLs
+      const formattedLinkedIn = formatLinkedIn(fields.linkedin);
+      const formattedGitHub = formatGitHub(fields.github);
+      
       // Minimal YAML-ready block a contributor can drop into a data file
       const lines = [
         "-",
@@ -282,8 +334,8 @@
         prYamlLine("  english_name", fields.english || ""),
         prYamlLine("  website", fields.website),
         prYamlLine("  info_email", fields.email || ""),
-        prYamlLine("  linkedin", fields.linkedin || ""),
-        prYamlLine("  github", fields.github || ""),
+        prYamlLine("  linkedin", formattedLinkedIn || ""),
+        prYamlLine("  github", formattedGitHub || ""),
         prYamlLine("  other_repo", fields.otherRepo || "")
       ].filter(Boolean);
       return lines.join("\n");
@@ -315,10 +367,32 @@
     }
 
     function validate(fields) {
+      // Require company name and website, and website must be a valid URL
       if (!fields.name || !fields.website) {
-        setError();
+        setError(window.i18n.currentTranslations()?.form?.validation?.required_fields || 'Company name and Website are required.');
         return false;
       }
+      
+      // Add https:// prefix if missing from website URL
+      if (!fields.website.match(/^https?:\/\//)) {
+        fields.website = 'https://' + fields.website;
+        document.getElementById("website").value = fields.website;
+      }
+      
+      // Validate website URL
+      try {
+        new URL(fields.website);
+      } catch {
+        setError(window.i18n.currentTranslations()?.form?.validation?.invalid_url || 'Please enter a valid URL.');
+        return false;
+      }
+      
+      // Validate email if provided
+      if (fields.email && !fields.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        setError('Please enter a valid email address.');
+        return false;
+      }
+      
       clearError();
       return true;
     }
@@ -345,7 +419,8 @@
       
       // Debug info in console
       console.log('Page fully loaded with i18n support');
-      console.log('Current language:', window.i18n.currentTranslations ? 'Translations loaded' : 'No translations');
+      console.log('Current language:', window.i18n.currentLanguage ? window.i18n.currentLanguage : 'Unknown');
+      console.log('Current translations:', window.i18n.currentTranslations ? 'Translations loaded' : 'No translations');
       console.log('Available languages:', Object.keys(LANGUAGES).join(', '));
       
       // Attach all event listeners after the DOM is ready
