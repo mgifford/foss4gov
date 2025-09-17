@@ -351,8 +351,8 @@
       <p class="lede" data-i18n="app.tagline">We are building a global list of service companies that use and contribute to Free and Open Source Software for government digital services. Contribute your company by Pull Request or GitHub Issue.</p>
       <p class="lede" data-i18n="app.description">Open innovation enables governments to adapt, experiment, and avoid lock-in. Collaboration is essential to healthy democracies. Public code strengthens digital public goods.</p>
       <div class="actions" aria-label="Primary actions">
-        <a id="prLink" class="cta" href="#companies" data-i18n="nav.add_company">Add your company</a>
-        <a id="issueLinkTop" class="cta" href="#companies" data-i18n="nav.create_issue">Create a GitHub Issue</a>
+        <a id="prLink" class="cta" href="#form" data-i18n="nav.add_company">Add your company</a>
+        <a id="issueLinkTop" class="cta" href="#form" data-i18n="nav.create_issue">Create a GitHub Issue</a>
       </div>
     </div>
   </header>
@@ -373,13 +373,6 @@
           <div class="card">
             <p class="notice" role="note" data-i18n="contribute.data_notice">This page does not collect or store form data. The form below generates a prefilled GitHub Issue link or PR payload for you to submit to the repository.</p>
           </div>
-        </div>
-      </section>
-
-      <section aria-labelledby="companies">
-        <h2 id="companies" data-i18n="companies.title">Listed Companies</h2>
-        <div id="company-list" class="grid">
-          <p data-i18n="companies.loading">Loading companies...</p>
         </div>
       </section>
 
@@ -417,6 +410,13 @@
           <div id="errorSummary" class="notice" role="alert" aria-live="assertive" tabindex="-1" hidden></div>
           <div id="output" class="card" aria-live="polite" tabindex="-1" hidden></div>
         </form>
+      </section>
+
+      <section aria-labelledby="companies">
+        <h2 id="companies" data-i18n="companies.title">Listed Companies</h2>
+        <div id="company-list" class="grid">
+          <p data-i18n="companies.loading">Loading companies...</p>
+        </div>
       </section>
 
       <section aria-labelledby="criteria">
