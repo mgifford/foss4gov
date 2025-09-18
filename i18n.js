@@ -502,15 +502,33 @@ function createLanguageSwitcher() {
 async function loadCompanies() {
   const listContainer = document.getElementById('company-list');
   try {
-    // Sample companies data for testing
-    const sampleCompaniesData = `name,english,website,email,linkedin,github,otherRepo
-OpenDrupal,Open Drupal,https://www.opendrupal.org,info@opendrupal.org,https://linkedin.com/company/opendrupal,https://github.com/opendrupal,
-Acquia,,https://www.acquia.com,info@acquia.com,https://linkedin.com/company/acquia,https://github.com/acquia,
-CivicActions,,https://civicactions.com,info@civicactions.com,https://linkedin.com/company/civicactions,https://github.com/civicactions,
-Jadu,,https://www.jadu.net,info@jadu.net,https://linkedin.com/company/jadu,https://github.com/jadu,`;
+    console.log("Attempting to fetch companies.csv...");
     
-    // Parse the CSV data directly
-    const csvData = sampleCompaniesData;
+    // Add cache-busting query parameter to prevent browser caching
+    const cacheBuster = `?nocache=${new Date().getTime()}`;
+    
+    // Set up fetch options to disable caching
+    const fetchOptions = {
+      method: 'GET',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      },
+      cache: 'no-store'
+    };
+    
+    // Fetch the actual companies.csv file with cache busting
+    const response = await fetch('companies.csv' + cacheBuster, fetchOptions);
+    if (!response.ok) {
+      console.error(`CSV fetch failed with status: ${response.status} ${response.statusText}`);
+      throw new Error(`Failed to load companies: ${response.status} ${response.statusText}`);
+    }
+    
+    console.log("CSV fetch successful, parsing data...");
+    // Parse the CSV data
+    const csvData = await response.text();
+    console.log("CSV data:", csvData.substring(0, 100) + "..."); // Log the first 100 chars
     const rows = csvData.trim().split('\n');
     
     // Always skip the first row as it contains headers
@@ -532,12 +550,12 @@ Jadu,,https://www.jadu.net,info@jadu.net,https://linkedin.com/company/jadu,https
 
       const company = {
         name: unquote(row[0] || ''),
-        english: unquote(row[1] || ''),
+        english_name: unquote(row[1] || ''),
         website: unquote(row[2] || ''),
-        email: unquote(row[3] || ''),
+        info_email: unquote(row[3] || ''),
         linkedin: unquote(row[4] || ''),
         github: unquote(row[5] || ''),
-        otherRepo: unquote(row[6] || '')
+        other_repo: unquote(row[6] || '')
       };
 
       if (!company.name || !company.website) return; // Skip invalid rows
@@ -553,18 +571,18 @@ Jadu,,https://www.jadu.net,info@jadu.net,https://linkedin.com/company/jadu,https
       if (company.linkedin) {
         links.push(`<a href="${company.linkedin}">LinkedIn</a>`);
       }
-      if (company.otherRepo) {
-        links.push(`<a href="${company.otherRepo}">Git Repo</a>`);
+      if (company.other_repo) {
+        links.push(`<a href="${company.other_repo}">Git Repo</a>`);
       }
-      if (company.email) {
-        links.push(`<a href="mailto:${company.email}">Email</a>`);
+      if (company.info_email) {
+        links.push(`<a href="mailto:${company.info_email}">Email</a>`);
       }
       
       const linksHtml = links.length > 0 ? links.join(' | ') : '';
 
       card.innerHTML = `
         <h3><a href="${company.website}" rel="noopener noreferrer">${company.name}</a></h3>
-        ${company.english ? `<p><em>(${company.english})</em></p>` : ''}
+        ${company.english_name ? `<p><em>(${company.english_name})</em></p>` : ''}
         ${linksHtml ? `<p class="links">${linksHtml}</p>` : ''}
       `;
       listContainer.appendChild(card);
@@ -573,6 +591,61 @@ Jadu,,https://www.jadu.net,info@jadu.net,https://linkedin.com/company/jadu,https
     console.error('Error loading companies:', error);
     const errorMsg = getTranslation('companies.error') || 'Error loading companies: {error}';
     listContainer.innerHTML = `<p>${errorMsg.replace('{error}', error.message)}</p>`;
+    
+    // Additional error details for debugging
+    console.log("Browser location:", window.location.href);
+    console.log("Trying to fetch from:", new URL('companies.csv', window.location.href).href);
+    
+    // Try a fallback approach with sample data if fetch fails
+    console.log("Attempting fallback with sample data...");
+    try {
+      const fallbackData = `name,english_name,website,info_email,linkedin,github,other_repo
+"Example Company","Example Inc.","https://example.org","info@example.org","https://www.linkedin.com/company/example","https://github.com/example",""
+"Example Company 2","Example Inc. 2","https://example.com","info@example.com","https://www.linkedin.com/company/example","https://github.com/example",""`;
+      
+      const fallbackRows = fallbackData.trim().split('\n');
+      const fallbackDataRows = fallbackRows.slice(1);
+      
+      listContainer.innerHTML = '<p><strong>Using fallback sample data (CSV fetch failed)</strong></p>';
+      
+      fallbackDataRows.forEach(rowStr => {
+        if (rowStr.trim() === '') return;
+        const row = rowStr.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+        const unquote = (s) => s.startsWith('"') && s.endsWith('"') ? s.slice(1, -1).replace(/""/g, '"') : s;
+
+        const company = {
+          name: unquote(row[0] || ''),
+          english_name: unquote(row[1] || ''),
+          website: unquote(row[2] || ''),
+          info_email: unquote(row[3] || ''),
+          linkedin: unquote(row[4] || ''),
+          github: unquote(row[5] || ''),
+          other_repo: unquote(row[6] || '')
+        };
+
+        if (!company.name || !company.website) return;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        let links = [];
+        if (company.github) links.push(`<a href="${company.github}">GitHub</a>`);
+        if (company.linkedin) links.push(`<a href="${company.linkedin}">LinkedIn</a>`);
+        if (company.other_repo) links.push(`<a href="${company.other_repo}">Git Repo</a>`);
+        if (company.info_email) links.push(`<a href="mailto:${company.info_email}">Email</a>`);
+        
+        const linksHtml = links.length > 0 ? links.join(' | ') : '';
+
+        card.innerHTML = `
+          <h3><a href="${company.website}" rel="noopener noreferrer">${company.name}</a></h3>
+          ${company.english_name ? `<p><em>(${company.english_name})</em></p>` : ''}
+          ${linksHtml ? `<p class="links">${linksHtml}</p>` : ''}
+        `;
+        listContainer.appendChild(card);
+      });
+    } catch (fallbackError) {
+      console.error('Fallback also failed:', fallbackError);
+    }
   }
 }
 

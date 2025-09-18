@@ -151,6 +151,26 @@
       outline-offset: 2px;
       color: var(--text);
     }
+    
+    /* Refresh button container */
+    .refresh-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+    
+    #refreshCompanies {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    #refreshCompanies span[aria-hidden="true"] {
+      font-size: 1.2rem;
+      line-height: 1;
+    }
 
     label { 
       display: block; 
@@ -414,6 +434,11 @@
 
       <section aria-labelledby="companies">
         <h2 id="companies" data-i18n="companies.title">Listed Companies</h2>
+        <div class="refresh-container">
+          <button id="refreshCompanies" class="button secondary" title="Refresh company list">
+            <span aria-hidden="true">↻</span> <span>Refresh List</span>
+          </button>
+        </div>
         <div id="company-list" class="grid">
           <p data-i18n="companies.loading">Loading companies...</p>
         </div>
@@ -563,7 +588,7 @@
         translations.issue?.confirmation_text || 'I confirm this company meets the requirements for inclusion.',
         "\n" + "CSV Format:",
         "```",
-        csvRow,
+        `"${fields.name}","${fields.english || ""}","${fields.website}","${fields.email || ""}","${formattedLinkedIn || ""}","${formattedGitHub || ""}","${fields.otherRepo || ""}"`,
         "```"
       ].filter(Boolean).join("\n");
 
@@ -769,6 +794,14 @@
       
       // Load the company list on page load
       window.i18n.loadCompanies();
+      
+      // Add refresh button functionality
+      const refreshBtn = document.getElementById('refreshCompanies');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+          window.i18n.loadCompanies();
+        });
+      }
       
       // Debug info in console
       console.log('Page fully loaded with i18n support');

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>FOSS4Gov Debug Page</title>
+  <style>
+    body { font-family: system-ui, sans-serif; line-height: 1.5; padding: 2rem; max-width: 1000px; margin: 0 auto; }
+    h1 { margin-top: 0; }
+    pre { background: #f5f5f5; padding: 1rem; overflow: auto; border-radius: 4px; }
+    button { padding: 0.5rem 1rem; margin-right: 0.5rem; margin-bottom: 1rem; }
+    .success { color: green; }
+    .error { color: red; }
+    .card { border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>FOSS4Gov Debug Page</h1>
+  
+  <div class="card">
+    <h2>CSV Fetch Test</h2>
+    <button id="testFetch">Test CSV Fetch</button>
+    <button id="testFetchNoCaching">Test CSV Fetch (No Cache)</button>
+    <div id="fetchResult"></div>
+  </div>
+  
+  <div class="card">
+    <h2>File System Check</h2>
+    <button id="checkFiles">Check Files</button>
+    <div id="filesResult"></div>
+  </div>
+  
+  <div class="card">
+    <h2>Render Companies Test</h2>
+    <button id="renderTest">Test Rendering</button>
+    <div id="renderResult"></div>
+  </div>
+  
+  <script>
+    // Test direct CSV fetch
+    document.getElementById('testFetch').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('fetchResult');
+      resultDiv.innerHTML = '<p>Testing CSV fetch...</p>';
+      
+      try {
+        // Use cache-busting to ensure we get the latest version
+        const cacheBuster = `?nocache=${new Date().getTime()}`;
+        
+        // Set up fetch options to disable caching
+        const fetchOptions = {
+          method: 'GET',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          },
+          cache: 'no-store'
+        };
+        
+        const response = await fetch('companies.csv' + cacheBuster, fetchOptions);
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
+        }
+        
+        const text = await response.text();
+        resultDiv.innerHTML = `
+          <p class="success">CSV fetch successful!</p>
+          <p>Content length: ${text.length} bytes</p>
+          <p>Fetched at: ${new Date().toLocaleTimeString()}</p>
+          <p>Full CSV content:</p>
+          <pre>${text}</pre>
+        `;
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <p class="error">Error fetching CSV: ${error.message}</p>
+          <p>Attempted to fetch from: ${new URL('companies.csv', window.location.href).href}</p>
+        `;
+      }
+    });
+    
+    // Test direct CSV fetch with cache busting
+    document.getElementById('testFetchNoCaching').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('fetchResult');
+      resultDiv.innerHTML = '<p>Testing CSV fetch with cache busting...</p>';
+      
+      try {
+        const cacheBuster = `?nocache=${new Date().getTime()}`;
+        
+        // Even more aggressive cache busting
+        const fetchOptions = {
+          method: 'GET',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          },
+          cache: 'no-store'
+        };
+        
+        const response = await fetch('companies.csv' + cacheBuster, fetchOptions);
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
+        }
+        
+        const text = await response.text();
+        resultDiv.innerHTML = `
+          <p class="success">CSV fetch successful (no cache)!</p>
+          <p>Content length: ${text.length} bytes</p>
+          <p>Content timestamp: ${new Date().toLocaleTimeString()}</p>
+          <p>Full CSV content:</p>
+          <pre>${text}</pre>
+        `;
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <p class="error">Error fetching CSV with cache busting: ${error.message}</p>
+          <p>Attempted to fetch from: ${new URL('companies.csv' + cacheBuster, window.location.href).href}</p>
+        `;
+      }
+    });
+    
+    // Check what files are accessible
+    document.getElementById('checkFiles').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('filesResult');
+      resultDiv.innerHTML = '<p>Checking files...</p>';
+      
+      const filesToCheck = [
+        'companies.csv',
+        'index.html',
+        'i18n.js',
+        'translations.js',
+        'README.md',
+        'lang/english.yaml'
+      ];
+      
+      const results = [];
+      
+      for (const file of filesToCheck) {
+        try {
+          const response = await fetch(file);
+          results.push(`${file}: ${response.ok ? 'OK' : 'Failed'} (${response.status})`);
+        } catch (error) {
+          results.push(`${file}: Error - ${error.message}`);
+        }
+      }
+      
+      resultDiv.innerHTML = `
+        <p>File accessibility results:</p>
+        <pre>${results.join('\n')}</pre>
+      `;
+    });
+    
+    // Test rendering companies
+    document.getElementById('renderTest').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('renderResult');
+      resultDiv.innerHTML = '<p>Testing company rendering...</p>';
+      
+      try {
+        // Sample data for testing
+        const sampleData = `name,english_name,website,info_email,linkedin,github,other_repo
+"Example Company","Example Inc.","https://example.org","info@example.org","https://www.linkedin.com/company/example","https://github.com/example",""
+"Example Company 2","Example Inc. 2","https://example.com","info@example.com","https://www.linkedin.com/company/example2","https://github.com/example2",""`;
+        
+        const rows = sampleData.trim().split('\n');
+        const dataRows = rows.slice(1);
+        
+        let html = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">';
+        
+        dataRows.forEach(rowStr => {
+          if (rowStr.trim() === '') return;
+          const row = rowStr.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+          const unquote = (s) => s.startsWith('"') && s.endsWith('"') ? s.slice(1, -1).replace(/""/g, '"') : s;
+
+          const company = {
+            name: unquote(row[0] || ''),
+            english_name: unquote(row[1] || ''),
+            website: unquote(row[2] || ''),
+            info_email: unquote(row[3] || ''),
+            linkedin: unquote(row[4] || ''),
+            github: unquote(row[5] || ''),
+            other_repo: unquote(row[6] || '')
+          };
+
+          if (!company.name || !company.website) return;
+
+          let links = [];
+          if (company.github) links.push(`<a href="${company.github}">GitHub</a>`);
+          if (company.linkedin) links.push(`<a href="${company.linkedin}">LinkedIn</a>`);
+          if (company.other_repo) links.push(`<a href="${company.other_repo}">Git Repo</a>`);
+          if (company.info_email) links.push(`<a href="mailto:${company.info_email}">Email</a>`);
+          
+          const linksHtml = links.length > 0 ? links.join(' | ') : '';
+
+          html += `
+            <div style="border: 1px solid #ddd; padding: 1rem; border-radius: 4px;">
+              <h3><a href="${company.website}">${company.name}</a></h3>
+              ${company.english_name ? `<p><em>(${company.english_name})</em></p>` : ''}
+              ${linksHtml ? `<p>${linksHtml}</p>` : ''}
+            </div>
+          `;
+        });
+        
+        html += '</div>';
+        resultDiv.innerHTML = `
+          <p class="success">Rendering test successful!</p>
+          <div>${html}</div>
+        `;
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <p class="error">Error rendering companies: ${error.message}</p>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
