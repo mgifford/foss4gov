@@ -1,0 +1,37 @@
+# .github/workflows/mirror.yml
+name: Mirror from GitHub to other forges
+on:
+  push:
+    branches: [ main ]   # and any long-lived branches you want mirrored
+    tags: [ '*' ]
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up git
+        run: |
+          git config user.name  "mirror-bot"
+          git config user.email "mirror-bot@example.org"
+
+      - name: Add remotes
+        env:
+          GL_TOKEN: ${{ secrets.GL_TOKEN }}
+          GL_URL:   ${{ secrets.GL_URL }}           # e.g. https://gitlab.com
+          GL_REPO:  ${{ secrets.GL_REPO }}          # e.g. group/project
+          FJ_TOKEN: ${{ secrets.FJ_TOKEN }}
+          FJ_URL:   ${{ secrets.FJ_URL }}           # e.g. https://code.example.org
+          FJ_REPO:  ${{ secrets.FJ_REPO }}          # e.g. org/project
+        run: |
+          git remote add gitlab  "https://oauth2:${GL_TOKEN}@${GL_URL#https://}/${GL_REPO}.git"
+          git remote add forgejo "https://${FJ_TOKEN}@${FJ_URL#https://}/${FJ_REPO}.git"
+
+      - name: Push branches and tags
+        run: |
+          git push --follow-tags --prune gitlab  +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
+          git push --follow-tags --prune forgejo +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
