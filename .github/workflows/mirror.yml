@@ -1,37 +1,29 @@
-# .github/workflows/mirror.yml
-name: Mirror from GitHub to other forges
+name: Mirror main and tags to GitLab
 on:
   push:
-    branches: [ main ]   # and any long-lived branches you want mirrored
+    branches: [ main ]
     tags: [ '*' ]
 
 jobs:
   mirror:
+    if: ${{ github.actor != 'mirror-bot' }}  # avoid loops if you later use this name
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Set up git
+      - name: Configure git user
         run: |
           git config user.name  "mirror-bot"
-          git config user.email "mirror-bot@example.org"
-
-      - name: Add remotes
+          git config user.email "mirror-bot@noreply.example"
+      - name: Add GitLab remote
         env:
-          GL_TOKEN: ${{ secrets.GL_TOKEN }}
-          GL_URL:   ${{ secrets.GL_URL }}           # e.g. https://gitlab.com
-          GL_REPO:  ${{ secrets.GL_REPO }}          # e.g. group/project
-          FJ_TOKEN: ${{ secrets.FJ_TOKEN }}
-          FJ_URL:   ${{ secrets.FJ_URL }}           # e.g. https://code.example.org
-          FJ_REPO:  ${{ secrets.FJ_REPO }}          # e.g. org/project
+          GL_TOKEN: ${{ secrets.GL_TOKEN }}        # GitLab PAT
+          GL_URL:   ${{ secrets.GL_URL }}          # e.g. https://git.civicactions.net
+          GL_REPO:  ${{ secrets.GL_REPO }}         # mike.gifford/mirror-of-foss4gov
         run: |
-          git remote add gitlab  "https://oauth2:${GL_TOKEN}@${GL_URL#https://}/${GL_REPO}.git"
-          git remote add forgejo "https://${FJ_TOKEN}@${FJ_URL#https://}/${FJ_REPO}.git"
-
+          git remote add gitlab "https://oauth2:${GL_TOKEN}@${GL_URL#https://}/${GL_REPO}.git"
+          git remote -v
       - name: Push branches and tags
         run: |
-          git push --follow-tags --prune gitlab  +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
-          git push --follow-tags --prune forgejo +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
+          git push --prune --follow-tags gitlab +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
