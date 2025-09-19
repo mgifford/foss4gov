@@ -20,7 +20,7 @@ jobs:
         env:
           GL_TOKEN: ${{ secrets.GL_TOKEN }}        # GitLab PAT
           GL_URL:   ${{ secrets.GL_URL }}          # e.g. https://git.civicactions.net
-          GL_REPO:  ${{ secrets.GL_REPO }}         # mike.gifford/mirror-of-foss4gov
+          GL_REPO:  ${{ secrets.GL_REPO }}         # mike.gifford/foss4gov
         run: |
           git remote add gitlab "https://oauth2:${GL_TOKEN}@${GL_URL#https://}/${GL_REPO}.git"
           git remote -v
